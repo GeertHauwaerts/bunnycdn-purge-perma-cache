@@ -5,6 +5,7 @@ namespace BunnyCDN\Storage\PermaCache;
 use BunnyCDN\Storage\BunnyCDNStorage;
 use BunnyCDN\Storage\Exceptions\BunnyCDNStorageAuthenticationException;
 use BunnyCDN\Storage\Exceptions\BunnyCDNStorageException;
+use GuzzleHttp\Client;
 
 class Purge
 {
@@ -14,8 +15,10 @@ class Purge
     public $sig;
 
     private $bcdn;
+    private $client;
 
-    public $path = '/__bcdn_perma_cache__/';
+    private $api = 'https://bunnycdn.com/api';
+    private $path = '/__bcdn_perma_cache__/';
 
     public function __construct($cfg = [])
     {
@@ -25,6 +28,7 @@ class Purge
         if (php_sapi_name() !== 'cli') {
             $this->res = new Response($this);
             $this->req = new Request($this);
+            $this->client = new Client();
             $this->process();
         }
     }
@@ -108,6 +112,34 @@ class Purge
         return true;
     }
 
+    private function cdnpurge(): bool
+    {
+        $path = ltrim($this->req->params->path, '/');
+
+        $urls = [
+            "https://{$this->req->params->storagezone_name}.b-cdn.net/{$path}",
+            "https://{$this->req->params->storagezone_name}.b-cdn.net/{$path}*",
+        ];
+
+        foreach ($urls as $u) {
+            try {
+                $res = $this->client->post(
+                    "{$this->api}/purge?url={$u}",
+                    [
+                        'allow_redirects' => false,
+                        'headers' => [
+                            'AccessKey' => $this->cfg->cfg['bunny_api_key'],
+                        ],
+                    ]
+                );
+            } catch (\Exception $e) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private function pcpath($path)
     {
         $path = rtrim($path, '/');
@@ -120,6 +152,7 @@ class Purge
 
     private function purged()
     {
+        $this->cdnpurge();
         $uuid = $this->sig->uuid();
 
         $this->res->json([

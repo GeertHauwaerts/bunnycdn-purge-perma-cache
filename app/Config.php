@@ -19,6 +19,7 @@ class Config
     {
         $required = [
             'app_signing_key' => 'string',
+            'bunny_api_key' => 'string',
             'storage_zones' => 'array',
         ];
 

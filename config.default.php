@@ -2,6 +2,7 @@
 
 return [
     'app_signing_key' => 'random-string-for-signing-requests-and-responses',
+    'bunny_api_key' => 'bunny-api-key',
     'storage_zones' => [
         'bunnycdn-storage-zone-name' => [
             'api_key' => 'bunnycdn-storage-zone-api-key',

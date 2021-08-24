@@ -6,10 +6,9 @@ FROM ubuntu
 
 RUN apt-get update \
   && export DEBIAN_FRONTEND=noninteractive \
-  && apt-get -y install --no-install-recommends composer git php-bcmath php-curl php-mbstring php-zip php-xml unzip zip
+  && apt-get -y install --no-install-recommends ca-certificates curl git php-bcmath php-curl php-cli php-mbstring php-zip php-xml unzip zip
 
-RUN composer config -g repos.packagist composer https://packagist.fi \
-  && composer global require hirak/prestissimo --no-plugins --no-scripts
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 ##
 # Cleanup
