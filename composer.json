@@ -1,6 +1,7 @@
 {
   "name": "geerthauwaerts/bunnycdn-purge-perma-cache",
   "description": "BunnyCDN - Purge from Perma Cache",
+  "version": "1.0.0",
   "keywords": [
     "bunnycdn",
     "purge",
@@ -16,8 +17,12 @@
   ],
   "require": {
     "php": ">=7.0",
-    "guzzlehttp/guzzle": "^7.3",
+    "adhocore/cli": "^1.0",
+    "mashape/unirest-php": "^3.0",
+    "nadar/php-composer-reader": "^1.3",
     "platformcommunity/bunnycdn-storage": "^0.2.0",
+    "predis/predis": "^2.0",
+    "qxsch/worker-pool": "^1.7",
     "ramsey/uuid": "^4.1"
   },
   "config": {
@@ -26,7 +31,7 @@
   },
   "autoload": {
     "psr-4": {
-      "BunnyCDN\\Storage\\PermaCache\\": "app"
+      "App\\": "app"
     }
   },
   "scripts": {

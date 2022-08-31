@@ -1,6 +1,6 @@
 <?php
 
-namespace BunnyCDN\Storage\PermaCache;
+namespace App\Controllers;
 
 use Ramsey\Uuid\Uuid;
 
@@ -8,7 +8,7 @@ class Signature
 {
     private $app;
 
-    public function __construct(Purge $app)
+    public function __construct($app)
     {
         $this->app = $app;
     }

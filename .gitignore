@@ -1,3 +1,7 @@
+## Files
 config.php
 composer.lock
+
+## Directories
+logs/
 vendor/

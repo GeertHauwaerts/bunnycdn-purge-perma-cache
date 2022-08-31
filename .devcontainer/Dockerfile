@@ -23,4 +23,9 @@ RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTO
 
 RUN apt-get update \
   && export DEBIAN_FRONTEND=noninteractive \
-  && apt-get -y install --no-install-recommends composer git php-curl php-zip php-xml unzip zip
+  && apt-get -y install --no-install-recommends git php-cli php-curl php-zip php-xml unzip zip
+
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+RUN su vscode -c "composer global require squizlabs/php_codesniffer" \
+  && su vscode -c "echo \"PATH=${PATH}:~/.composer/vendor/bin\" >> ~/.zshrc"

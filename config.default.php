@@ -17,4 +17,15 @@ return [
             'region' => 'de',
         ],
     ],
+    'redis' => [
+        'host' => 'bppc-redis',
+    ],
+    'test_command' => [
+        'service_url' => 'http://bppc-api:8000',
+        'tests' => [
+            ['bunnycdn-storage-zone-name' => 'test/path1/1.jpg'],
+            ['myzone' => 'test/path2/2.jpg'],
+            ['myotherzone' => 'test/path2/2.jpg'],
+        ],
+    ],
 ];

@@ -1,12 +1,29 @@
 version: "3.8"
 services:
-  api:
-    container_name: bunnycdn-purge-perma-cache
+  redis:
+    image: redis
+    container_name: bppc-redis
+    restart: always
+  console:
+    container_name: bppc-console
     restart: always
     build:
       context: .
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./docker/console/Dockerfile
     volumes:
-      - .:/var/www
+      - .:/opt/bppc
+    depends_on:
+      - redis
+  api:
+    container_name: bppc-api
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    volumes:
+      - .:/opt/bppc
     ports:
       - 8000:8000
+    depends_on:
+      - console
+      - redis
