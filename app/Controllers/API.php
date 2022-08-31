@@ -18,7 +18,7 @@ class API
         }
 
         $this->sig = new Signature($this);
-        $this->cache = new Cache($this);
+        $this->cache = new Cache();
 
         $this->checkPostData();
         $this->checkSignature();

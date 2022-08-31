@@ -6,7 +6,9 @@ use Ahc\Cli\Input\Command;
 use App\Controllers\Cache;
 use App\Controllers\Config;
 use App\Controllers\Log;
+use App\Controllers\Purge;
 use App\Controllers\Worker;
+use App\Helpers\StatusMessage;
 use QXS\WorkerPool\WorkerPool;
 
 class WorkerCommand extends Command
@@ -30,7 +32,7 @@ class WorkerCommand extends Command
     {
         $this->cfg = new Config(require __DIR__ . '/../../config.php');
         $this->log = new Log($this);
-        $this->cache = new Cache($this);
+        $this->cache = new Cache();
 
         $this->process();
     }
@@ -46,6 +48,12 @@ class WorkerCommand extends Command
             ->create(new Worker($this));
 
         while (true) {
+            if (StatusMessage::expired()) {
+                StatusMessage::touch();
+                $pending = $this->cache->llen(Purge::QUEUE_NAME);
+                $this->log->warn("There are {$pending} pending purges.");
+            }
+
             if ($wp->getFreeWorkers() !== 0) {
                 $wp->run(null);
             }

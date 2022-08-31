@@ -8,9 +8,10 @@ class Cache
 {
     private $client;
 
-    public function __construct($app)
+    public function __construct()
     {
-        $this->client = new Client($app->cfg->cfg['redis']);
+        $cfg = new Config(require __DIR__ . '/../../config.php');
+        $this->client = new Client($cfg->cfg['redis']);
     }
 
     public function getClient()
@@ -65,5 +66,10 @@ class Cache
         }
 
         return unserialize($res);
+    }
+
+    public function llen($key): int
+    {
+        return $this->client->llen($key);
     }
 }
