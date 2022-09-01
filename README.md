@@ -1,6 +1,8 @@
 ## About
 
-This app is a REST API to purge files from the [BunnyCDN](https://bunnycdn.com) Perma-Cache.
+This app is a REST API to purge files from the [BunnyCDN](https://bunnycdn.com) Perma-Cache. The
+app will first remove the files from the Perma-Cache and then issue a purge requests. This will
+ensure that a subsequent request will be fetched from the pullzone.
 
 ## Installation
 
@@ -22,6 +24,12 @@ To verify the integrity of the codebase you can run the PHP linter:
 ```console
 $ composer install
 $ composer phpcs
+```
+
+You can also sping up a local development environment:
+
+```console
+$ docker-compose up
 ```
 
 ## API Usage
@@ -58,7 +66,7 @@ Example:
 ```json
 {
     "storagezone_name": "myzone",
-    "path": "/kittens/meow.jpg",
+    "path": "kittens/meow.jpg",
     "uuid": "09d1e486-88e4-4c38-a7e0-e66eb8664a0e",
     "signature": "892b2c5c49a3d55e7b84178e5b4948ca9f4a177ccf4c7422afda3d2a6d4ae71b"
 }
@@ -72,28 +80,24 @@ The signature is calculated with the following method:
 $signature = hash_hmac('sha256', "{$uuid}:{$storagezone_name}:{$path}", $app_signing_key);
 ```
 
-## Library Usage
+## Worker Usage
 
-You can load the `BunnyCDN\Storage\PermaCache\Purge` class to create signed purge requests to submit to the REST API. For example:
+The API will immedtialy return a `200 OK` response and add the purge request into a queue. You
+need to start the worker to start processing the queue:
 
-```php
-<?php
+```console
+$ bppc worker
+```
 
-use BunnyCDN\Storage\PermaCache\Purge;
+> Note: By default, the worker will spin up 80% of your CPU count as workers, you can change
+> this by modifying the `private $ratio` in the `WorkerCommand`.
 
-require __DIR__ . '/vendor/autoload.php';
+## API and Worker Tests
 
-$app = new Purge(require __DIR__ . '/config.php');
-$uuid = $app->sig->uuid();
+You can easily add purge tests by configuring the `test_command` and running the `test` command:
 
-$res = json_encode([
-    'storagezone_name' => 'myzone',
-    'path' => '/kittens/meow.jpg',
-    'uuid' => $uuid,
-    'signature' => $app->sig->sign($uuid, 'myzone', '/kittens/meow.jpg'),
-], JSON_UNESCAPED_SLASHES);
-
-echo "curl -d '{$res}'  -H 'Content-Type: application/json' 'http://localhost:8000'\n";
+```console
+$ bppc test
 ```
 
 ## Configuration of the Stack
