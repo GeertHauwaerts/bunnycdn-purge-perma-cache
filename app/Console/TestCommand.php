@@ -25,10 +25,12 @@ class TestCommand extends Command
 
         if (!$this->cfg->checkCfg()) {
             $this->log->error('Invalid configuration.');
+            return;
         }
 
         if (!isset($this->cfg->cfg['test_command'])) {
             $this->log->comment('No tests are configured.');
+            return;
         }
 
         $this->sig = new Signature($this);
