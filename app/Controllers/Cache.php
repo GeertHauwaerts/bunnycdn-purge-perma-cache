@@ -6,6 +6,8 @@ use Predis\Client;
 
 class Cache
 {
+    const RETRY_TIMEOUT = 10;
+
     private $client;
 
     public function __construct()
@@ -71,5 +73,18 @@ class Cache
     public function llen($key): int
     {
         return $this->client->llen($key);
+    }
+
+    public function ping(): bool
+    {
+        try {
+            return $this->set('ping', time());
+        } catch (\Predis\Connection\ConnectionException $e) {
+            return false;
+        } catch (\Predis\Response\ServerException $e) {
+            return false;
+        }
+
+        return false;
     }
 }

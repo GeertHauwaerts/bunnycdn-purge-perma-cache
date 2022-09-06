@@ -48,6 +48,12 @@ class WorkerCommand extends Command
             ->create(new Worker($this));
 
         while (true) {
+            if (!$this->cache->ping()) {
+                $this->log->error("Unable to connect to Redis.");
+                sleep(Cache::RETRY_TIMEOUT);
+                continue;
+            }
+
             if (StatusMessage::expired()) {
                 StatusMessage::touch();
                 $pending = $this->cache->llen(Purge::QUEUE_NAME);
