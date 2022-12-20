@@ -43,7 +43,7 @@ class Purge
         }
 
         if (!$this->delete(self::pcpath("{$this->path}/{$this->data['path']}/"))) {
-            $this->app->log->error("[{$this->data['uuid']}] Failed to purge '{$this->data['path']}' from '{$this->data['storagezone_name']}'.");
+            $this->app->log->error("[{$this->data['uuid']}] Failed to delete '{$this->data['path']}' from '{$this->data['storagezone_name']}'.");
         }
 
         $this->purge();
@@ -131,7 +131,7 @@ class Purge
                     ]
                 );
             } catch (\Exception $e) {
-                $this->app->log->error("[{$this->data['uuid']}] Failed to purge '{$u}' from the CDN.");
+                $this->app->log->error("[{$this->data['uuid']}] Failed to purge '{$u}' from the CDN ({$e->getMessage()}).");
                 return false;
             }
 
