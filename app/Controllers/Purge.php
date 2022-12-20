@@ -124,7 +124,7 @@ class Purge
 
             try {
                 $res = $this->client->post(
-                    self::API_URL . "/purge?url={$u}",
+                    self::API_URL . "/purge?async=1&url={$u}",
                     [
                         'allow_redirects' => false,
                         'headers' => $this->headers(),
