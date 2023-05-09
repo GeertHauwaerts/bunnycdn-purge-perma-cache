@@ -44,6 +44,9 @@ class Purge
 
         if (!$this->delete(self::pcpath("{$this->path}/{$this->data['path']}/"))) {
             $this->app->log->error("[{$this->data['uuid']}] Failed to delete '{$this->data['path']}' from '{$this->data['storagezone_name']}'.");
+            $this->app->cache->rpush(self::QUEUE_NAME, $this->data);
+            $this->app->log->error("[{$this->data['uuid']}] Requeued the purge for '{$this->data['path']}' in '{$this->data['storagezone_name']}'.");
+            return;
         }
 
         $this->purge();
