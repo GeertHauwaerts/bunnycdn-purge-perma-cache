@@ -31,7 +31,7 @@ class Worker implements WorkerInterface
             $purge = $this->app->cache->lpop(Purge::QUEUE_NAME);
 
             if (!$purge) {
-                sleep (5);
+                sleep(5);
                 continue;
             }
 

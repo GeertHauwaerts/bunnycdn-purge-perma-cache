@@ -163,7 +163,8 @@ class Purge
     private function purge()
     {
         if (!$this->cdnpurge()) {
-            $this->app->log->error("[{$this->data['uuid']}] Failed to purge '{$this->data['path']}' in '{$this->data['storagezone_name']}'.");
+            $this->app->cache->rpush(self::QUEUE_NAME, $this->data);
+            $this->app->log->error("[{$this->data['uuid']}] Requeued the purge for '{$this->data['path']}' in '{$this->data['storagezone_name']}'.");
             return;
         }
 
